@@ -192,18 +192,21 @@ bool perform_on_folder(fs::path path, CURL* curl)
 			}
 		}
 
+		if (imdb_data.count(-1) == 0) return true;
 		if (subs.size() > 0 && !fs::exists(path / "subs")) fs::create_directory(path / "subs");
 		std::wstring show_name = imdb_data.at(-1);
 
 		for (fs::path& path : subs)
 		{
 			std::wstring dest = wcscmp(path.parent_path().filename().wstring().c_str(), L"subs") == 0 ? path.parent_path() / L"" : path.parent_path() / L"subs" / L"";
-			episode_data ep = get_episode(path.filename().wstring());
+			episode_data ep = get_episode(path.stem().wstring());
 			std::wstring ep_name = convert_episode_name(imdb_data.at(ep.season), ep);
 
 			dest += show_name + (ep.season < 10 ? L" S0" : L" S") + std::to_wstring(ep.season) + (ep.episode < 10 ? L"E0" : L"E") + std::to_wstring(ep.episode);
 			if (ep.is_double) dest += ((ep.episode + 1) < 10 ? L"-E0" : L"-E") + std::to_wstring(ep.episode + 1);
-			dest += L" - " + ep_name + path.extension().wstring();
+			dest += L" - " + ep_name;
+			if (has_country_code(path.filename().wstring())) dest += path.stem().wstring().substr(path.stem().wstring().size() - 4);
+			dest += path.extension().wstring();
 
 			std::wcout << "Converted " << dest << "\n";
 			fs::rename(path, dest);

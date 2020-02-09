@@ -76,6 +76,12 @@ bool is_subtitle(fs::path path)
 	return subs_extensions.count(path.extension().wstring()) > 0;
 }
 
+bool has_country_code(const std::wstring& name)
+{
+	int l = name.length();
+	return name[l - 8] == L'-' && iswalpha(name[l - 7]) && iswalpha(name[l - 6]) && iswalpha(name[l - 5]);
+}
+
 std::wstring string_to_wstring(std::string& in)
 {
 	int char_count = MultiByteToWideChar(CP_UTF8, 0, in.c_str(), -1, 0, 0);
