@@ -79,7 +79,7 @@ bool is_subtitle(fs::path path)
 bool has_country_code(const std::wstring& name)
 {
 	int l = name.length();
-	return name[l - 8] == L'-' && iswalpha(name[l - 7]) && iswalpha(name[l - 6]) && iswalpha(name[l - 5]);
+	return name[l - 4] == L'-' && iswalpha(name[l - 3]) && iswalpha(name[l - 2]) && iswalpha(name[l - 1]);
 }
 
 std::wstring string_to_wstring(std::string& in)
