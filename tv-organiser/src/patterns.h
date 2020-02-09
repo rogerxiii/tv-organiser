@@ -40,7 +40,7 @@ struct episode_data
 	bool is_double = false;
 };
 
-int find_pattern(std::wstring& pattern, std::wstring& name, episode_data& ep, int start = -1)
+int find_pattern(std::wstring& pattern, const std::wstring& name, episode_data& ep, int start = -1)
 {
 	bool first = false;
 	bool correct = true;

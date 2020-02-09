@@ -33,7 +33,7 @@ bool perform_on_folder(fs::path path, CURL* curl)
 			for (fs::directory_entry infile : fs::directory_iterator(file.path()))
 			{
 				std::wstring inname = infile.path().filename().wstring();
-				if (is_video(infile.path()))
+				if (is_video(infile.path()) || is_subtitle(infile.path()))
 				{
 					std::wcout << "Moving " << name << "\n";
 					std::wstring newpath = file.path().parent_path() / (name + infile.path().extension().wstring());
@@ -68,12 +68,22 @@ bool perform_on_folder(fs::path path, CURL* curl)
 	if ((imdb_number.size() == 9 || imdb_number.size() == 10) && imdb_number.at(0) == 't' && imdb_number.at(1) == 't')
 	{
 		static std::unordered_map<int, std::wstring> imdb_data;
+		std::vector<fs::path> subs;
+
+		if (fs::exists(path / "subs"))
+			for (fs::directory_entry file : fs::directory_iterator(path / "subs"))
+			{
+				std::wstring name = file.path().filename().wstring();
+				if (is_subtitle(file.path())) subs.emplace_back(file.path());
+			}
 
 		for (fs::directory_entry file : fs::directory_iterator(path))
 		{
 			if (file.is_directory()) continue;
 
 			std::wstring name = file.path().filename().wstring();
+			if (is_subtitle(file.path())) subs.emplace_back(file.path()); // We do subtitles at the end, save them here
+
 			if (episode_data ep = get_episode(name); is_video(file.path()) && ep.episode != -1 && ep.season != -1)
 			{
 				// Get the shows title if we haven't already gotten it before
@@ -182,6 +192,23 @@ bool perform_on_folder(fs::path path, CURL* curl)
 			}
 		}
 
+		if (subs.size() > 0 && !fs::exists(path / "subs")) fs::create_directory(path / "subs");
+		std::wstring show_name = imdb_data.at(-1);
+
+		for (fs::path& path : subs)
+		{
+			std::wstring dest = wcscmp(path.parent_path().filename().wstring().c_str(), L"subs") == 0 ? path.parent_path() / L"" : path.parent_path() / L"subs" / L"";
+			episode_data ep = get_episode(path.filename().wstring());
+			std::wstring ep_name = convert_episode_name(imdb_data.at(ep.season), ep);
+
+			dest += show_name + (ep.season < 10 ? L" S0" : L" S") + std::to_wstring(ep.season) + (ep.episode < 10 ? L"E0" : L"E") + std::to_wstring(ep.episode);
+			if (ep.is_double) dest += ((ep.episode + 1) < 10 ? L"-E0" : L"-E") + std::to_wstring(ep.episode + 1);
+			dest += L" - " + ep_name + path.extension().wstring();
+
+			std::wcout << "Converted " << dest << "\n";
+			fs::rename(path, dest);
+		}
+
 		return true;
 	}
 
@@ -208,8 +235,8 @@ int main(int nargs, char** args)
 			" -h --help\t\tDisplays this help screen.\n"
 			" -i --intact\t\tDo not remove folders and files after moving episodes out.\n"
 			" -o --original\t\tUse the \"original title\" in IMDB. Also useful for localized/translated titles.\n"
-			" -r --recursive\t\tExecute this program on every subfolder in this folder instead.\n\t\t\tUseful for i.e. seasons in separate folders.\n"
-			" -s --subtitles\t\tAlso renames subtitles that are either in this folder, in the show's folder\n\t\t\tor in the \"subs\" folder. [NOT YET IMPLEMENTED]\n\n";
+			" -r --recursive\t\tExecute this program on every subfolder in this folder instead.\n\t\t\tUseful for i.e. seasons in separate folders.\n";
+			//" -s --subtitles\t\tAlso renames subtitles that are either in this folder, in the show's folder\n\t\t\tor in the \"subs\" folder. [NOT YET IMPLEMENTED]\n\n";
 
 		return 0;
 	}
@@ -222,7 +249,7 @@ int main(int nargs, char** args)
 		else if (!strcmp(arg, "-i") || !strcmp(arg, "--intact")) g_intact = true;
 		else if (!strcmp(arg, "-o") || !strcmp(arg, "--original")) g_original = true;
 		else if (!strcmp(arg, "-r") || !strcmp(arg, "--recursive")) g_recursive = true;
-		else if (!strcmp(arg, "-s") || !strcmp(arg, "--subtitles")) g_subtitles = true;
+		//else if (!strcmp(arg, "-s") || !strcmp(arg, "--subtitles")) g_subtitles = true;
 	}
 
 	// Do the actual renaming

@@ -8,11 +8,12 @@
 #include "patterns.h"
 
 // A few global variables
-bool g_custom = false, g_intact = false, g_original = false, g_recursive = false, g_subtitles = false;
+bool g_custom = false, g_intact = false, g_original = false, g_recursive = false; //, g_subtitles = false;
 namespace fs = std::filesystem;
 
 // Add to these when needed
 std::unordered_set<std::wstring> extensions = { L".mp4", L".avi", L".mkv" };
+std::unordered_set<std::wstring> subs_extensions = { L".srt", L".ssa", L".sub" };
 std::unordered_set<wchar_t> illegal_chars = { L'\\', L'/', L':', L'*', L'?', L'"', L'<', L'>', L'|' };
 
 
@@ -35,7 +36,7 @@ int wtoi(wchar_t& wchar)
 	}
 }
 
-episode_data get_episode(std::wstring& name)
+episode_data get_episode(const std::wstring& name)
 {
 	episode_data ep;
 
@@ -68,6 +69,11 @@ bool is_video(fs::path path)
 	std::wstring ext = path.extension().wstring();
 
 	return extensions.count(ext) > 0 && name.find(L"sample") == std::string::npos;
+}
+
+bool is_subtitle(fs::path path)
+{
+	return subs_extensions.count(path.extension().wstring()) > 0;
 }
 
 std::wstring string_to_wstring(std::string& in)
@@ -109,16 +115,20 @@ std::wstring get_episode_name_from_data(std::wstring& data, int episode)
 
 std::wstring convert_episode_name(std::wstring& data, episode_data& ep)
 {
-	std::wstring ep_name = get_episode_name_from_data(data, ep.episode);
-	std::wstring ep_name2 = get_episode_name_from_data(data, ep.episode + 1);
-
-	int pos1 = ep_name.find(L"Part"), pos2 = ep_name2.find(L"Part");
-	if (pos1 != std::string::npos && pos2 != std::string::npos && !wcscmp(ep_name.substr(0, pos1).c_str(), ep_name2.substr(0, pos2).c_str()))
+	std::wstring ep_name = get_episode_name_from_data(data, ep.episode), ep_name2 = L"";
+	
+	if (ep.is_double)
 	{
-		std::wstring name = ep_name.substr(0, pos1);
-		if (name[name.length() - 1] == L' ') name.pop_back();
-		return name;
-	}
+		ep_name2 = get_episode_name_from_data(data, ep.episode + 1);
 
+		int pos1 = ep_name.find(L"Part"), pos2 = ep_name2.find(L"Part");
+		if (pos1 != std::string::npos && pos2 != std::string::npos && !wcscmp(ep_name.substr(0, pos1).c_str(), ep_name2.substr(0, pos2).c_str()))
+		{
+			std::wstring name = ep_name.substr(0, pos1);
+			if (name[name.length() - 1] == L' ') name.pop_back();
+			return name;
+		}
+	}
+	
 	return ep_name + (ep.is_double ? L" & " + ep_name2 : L"");
 }

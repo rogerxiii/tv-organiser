@@ -18,12 +18,13 @@ Alternatively, you may also move this tool to a folder which has been added to P
 - Can deal with double episodes
 - Can deal with unicode names
 - Customizable with range of optional flags
+- Also automatically handles subtitles either in the root folder or in the _subs/_ subfolder
 
 #### Optional Flags
-![](https://i.rogerxiii.com/24122019181824081824.png)
+![](https://i.rogerxiii.com/34022020220934222234.png)
 
 ## Example
-Let's take as an example this first season of the show Dark, which looks as follows:  
+Let's take as an example this first season of the show _Dark_, which looks as follows:  
   
 ![](https://i.rogerxiii.com/59122019131859221359.png)
 
@@ -42,5 +43,4 @@ Please note that for the time being this tool is **Windows only**.
 
 ## Future Plans
 - Create an installer which adds this program to PATH so that it can be run without copying each use
-- Implement the _-s_ flag
 - Make the tool work on Linux
