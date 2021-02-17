@@ -188,7 +188,7 @@ bool perform_on_folder(fs::path path, CURL* curl)
 				final_name += L" - " + ep_name + file.path().extension().wstring();
 
 				std::wcout << "Converted " << final_name << "\n";
-				fs::rename(file, final_name);
+				if (!fs::exists(final_name)) fs::rename(file, final_name);
 			}
 		}
 
@@ -239,7 +239,6 @@ int main(int nargs, char** args)
 			" -i --intact\t\tDo not remove folders and files after moving episodes out.\n"
 			" -o --original\t\tUse the \"original title\" in IMDB. Also useful for localized/translated titles.\n"
 			" -r --recursive\t\tExecute this program on every subfolder in this folder instead.\n\t\t\tUseful for i.e. seasons in separate folders.\n";
-			//" -s --subtitles\t\tAlso renames subtitles that are either in this folder, in the show's folder\n\t\t\tor in the \"subs\" folder. [NOT YET IMPLEMENTED]\n\n";
 
 		return 0;
 	}
@@ -252,7 +251,6 @@ int main(int nargs, char** args)
 		else if (!strcmp(arg, "-i") || !strcmp(arg, "--intact")) g_intact = true;
 		else if (!strcmp(arg, "-o") || !strcmp(arg, "--original")) g_original = true;
 		else if (!strcmp(arg, "-r") || !strcmp(arg, "--recursive")) g_recursive = true;
-		//else if (!strcmp(arg, "-s") || !strcmp(arg, "--subtitles")) g_subtitles = true;
 	}
 
 	// Do the actual renaming
@@ -271,4 +269,5 @@ int main(int nargs, char** args)
 
 	if (result) std::wcout << "\n\nAll done, cleaning up!";
 	curl_easy_cleanup(curl);
+	return 0;
 }

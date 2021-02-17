@@ -8,7 +8,7 @@
 #include "patterns.h"
 
 // A few global variables
-bool g_custom = false, g_intact = false, g_original = false, g_recursive = false; //, g_subtitles = false;
+bool g_custom = false, g_intact = false, g_original = false, g_recursive = false;
 namespace fs = std::filesystem;
 
 // Add to these when needed
@@ -18,7 +18,7 @@ std::unordered_set<wchar_t> illegal_chars = { L'\\', L'/', L':', L'*', L'?', L'"
 
 
 
-int wtoi(wchar_t& wchar)
+int wtoi(const wchar_t& wchar)
 {
 	switch (wchar)
 	{
