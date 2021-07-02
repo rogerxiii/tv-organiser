@@ -116,17 +116,18 @@ bool perform_on_folder(fs::path path, CURL* curl)
 						std::wstring data = string_to_wstring(data_s);
 
 						// Getting the title, normal or original
+						// Note: haven't found a show yet that is translated, so the original title functionality is broken atm
 						int beginpos, endpos;
-						if (int pos = data.find(L"originalTitle"); g_original && pos != std::string::npos)
-						{
-							beginpos = pos + 15;
-							endpos = data.find(L"<span", beginpos);
-						}
-						else
-						{
-							beginpos = data.find(L"title_wrapper") + 29;
-							endpos = data.find(L"&nbsp;", beginpos);
-						}
+						//if (int pos = data.find(L"originalTitle"); g_original && pos != std::string::npos)
+						//{
+							//beginpos = pos + 15;
+							//endpos = data.find(L"<span", beginpos);
+						//}
+						//else
+						//{
+							beginpos = data.find(L">", data.find(L"title-block__title")) + 1;
+							endpos = data.find(L"</h1>", beginpos);
+						//}
 
 						std::wstring showname = data.substr(beginpos, endpos - beginpos);
 						sanitize_name(showname);
