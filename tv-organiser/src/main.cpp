@@ -102,7 +102,7 @@ bool perform_on_folder(fs::path path, CURL* curl)
 						curl_easy_setopt(curl, CURLOPT_URL, web.c_str());
 						curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 						curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)& data_s);
-						curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+						curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36");
 
 						CURLcode res = curl_easy_perform(curl);
 						if (res != CURLE_OK)
@@ -161,7 +161,7 @@ bool perform_on_folder(fs::path path, CURL* curl)
 					curl_easy_setopt(curl, CURLOPT_URL, web.c_str());
 					curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 					curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void*)& data_s);
-					curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+					curl_easy_setopt(curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/108.0.0.0 Safari/537.36");
 
 					CURLcode res = curl_easy_perform(curl);
 					if (res != CURLE_OK)

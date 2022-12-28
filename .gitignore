@@ -1,0 +1,6 @@
+.vs/
+*.user
+Debug/
+Release/
+tv-organiser/Debug/
+tv-organiser/Release/
