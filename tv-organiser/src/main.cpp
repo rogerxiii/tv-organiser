@@ -125,8 +125,8 @@ bool perform_on_folder(fs::path path, CURL* curl)
 						//}
 						//else
 						//{
-							beginpos = data.find(L">", data.find(L"title-block__title")) + 1;
-							endpos = data.find(L"</h1>", beginpos);
+							beginpos = data.find(L">", data.find(L">", data.find(L"hero__pageTitle")) + 1) + 1;
+							endpos = data.find(L"</", beginpos);
 						//}
 
 						std::wstring showname = data.substr(beginpos, endpos - beginpos);
