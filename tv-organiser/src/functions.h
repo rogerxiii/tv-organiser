@@ -113,7 +113,7 @@ std::wstring get_episode_name_from_data(std::wstring& data, int episode)
 	std::wstring search_text = L"ep" + std::to_wstring(episode) + L"\"";
 	int title_pos = data.find(search_text.c_str());
 	if (title_pos == std::string::npos) return L"";
-	title_pos += 12 + (episode >= 10 ? 1 : 0);
+	title_pos = data.find(L"=", title_pos) + 2;
 	std::wstring ep_name = data.substr(title_pos, data.find(L'"', title_pos) - title_pos);
 	sanitize_name(ep_name);
 	return ep_name;
